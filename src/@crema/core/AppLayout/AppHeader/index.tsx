@@ -18,6 +18,7 @@ import { URL } from "../../../../config/apiUrl";
 import axiosClient from "../../../../api/axiosClient";
 import { searchProductsApi } from "../../../../api/productApi";
 import { parseProductImage, type ApiProduct } from "../../../../pages/Product";
+import useDebounce from "../../../../hooks/useDebounce";
 import "./AppHeader.css";
 
 const { Header } = Layout;
@@ -151,7 +152,8 @@ function AppHeader() {
     const [isSearching, setIsSearching] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
-    // Sync search input with URL search query param
+    const debouncedSearchQuery = useDebounce(searchQuery, 800);
+
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const q = params.get("search");
@@ -160,16 +162,16 @@ function AppHeader() {
         }
     }, [location.search]);
 
-    // Live search suggestions using searchProductsApi (/product/search)
     useEffect(() => {
-        const query = searchQuery.trim();
+        const query = debouncedSearchQuery.trim();
         if (!query) {
             setSuggestions([]);
             setShowSuggestions(false);
             return;
         }
 
-        const timer = setTimeout(async () => {
+        let isMounted = true;
+        const fetchSuggestions = async () => {
             setIsSearching(true);
             try {
                 const res: any = await searchProductsApi({
@@ -178,19 +180,25 @@ function AppHeader() {
                     pageSize: 5,
                 });
                 const list = Array.isArray(res) ? res : res?.data || [];
-                if (Array.isArray(list)) {
+                if (isMounted && Array.isArray(list)) {
                     setSuggestions(list);
                     setShowSuggestions(true);
                 }
             } catch (err) {
                 console.error("Live search error:", err);
             } finally {
-                setIsSearching(false);
+                if (isMounted) {
+                    setIsSearching(false);
+                }
             }
-        }, 300);
+        };
 
-        return () => clearTimeout(timer);
-    }, [searchQuery]);
+        fetchSuggestions();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [debouncedSearchQuery]);
 
     const handleSearch = () => {
         setShowSuggestions(false);
@@ -343,7 +351,6 @@ function AppHeader() {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onFocus={() => searchQuery.trim() && setShowSuggestions(true)}
-                                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                                 placeholder="Nhập từ khóa tìm kiếm sản phẩm thời trang..."
                             />
                             <Button
