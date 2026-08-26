@@ -1,0 +1,73 @@
+/* Order Review Modal Custom Styling */
+
+.review-modal-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.review-modal-subtitle {
+    font-size: 13px;
+    color: #8892a0;
+    font-weight: 400;
+}
+
+.review-modal-body {
+    max-height: 65vh;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.review-item-card {
+    background-color: #fcfdfe;
+    border: 1px solid #eef2f6;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+.review-item-card:last-child {
+    margin-bottom: 0;
+}
+
+/* Product Info Brief */
+.review-product-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.review-product-img {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.review-product-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #22242a;
+}
+
+.review-product-variant {
+    font-size: 12px;
+    color: #8892a0;
+    margin-top: 2px;
+}
+
+/* Rating Area */
+.review-rating-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.review-rating-stars {
+    color: #faad14;
+    font-size: 22px;
+}

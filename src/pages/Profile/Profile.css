@@ -1,0 +1,318 @@
+/* Profile Main Page Layout */
+.profile-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px 60px 20px;
+    min-height: 100vh;
+}
+
+.profile-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 28px;
+    align-items: start;
+    margin-top: 20px;
+}
+
+/* Sidebar User Summary Card */
+.profile-sidebar {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e6ebf1;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    padding: 24px 18px;
+    position: sticky;
+    top: 90px;
+}
+
+.user-profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #edf0f5;
+    margin-bottom: 16px;
+}
+
+.avatar-wrapper {
+    position: relative;
+    margin-bottom: 12px;
+}
+
+.avatar-upload-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #c89968;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease;
+}
+
+.avatar-upload-badge:hover {
+    transform: scale(1.1);
+}
+
+.user-display-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #22242a;
+    margin-bottom: 4px;
+}
+
+.user-display-email {
+    font-size: 12.5px;
+    color: #778290;
+    margin-bottom: 10px;
+}
+
+.user-membership-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #fff7ee 0%, #fff0de 100%);
+    border: 1px solid rgba(200, 153, 104, 0.4);
+    color: #c89968;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Sidebar Menu Navigation */
+.profile-menu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.profile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #555e6b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.profile-menu-item:hover {
+    background-color: #f7f9fb;
+    color: #22242a;
+}
+
+.profile-menu-item.active {
+    background-color: #22242a;
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(34, 36, 42, 0.15);
+}
+
+.profile-menu-item.active .menu-icon {
+    color: #c89968;
+}
+
+.menu-icon {
+    font-size: 16px;
+    transition: color 0.2s ease;
+}
+
+/* Right Main Content Card */
+.profile-content-card {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e6ebf1;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    padding: 30px 28px;
+    min-height: 480px;
+}
+
+.tab-header {
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.tab-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #22242a;
+    margin: 0 0 4px 0;
+}
+
+.tab-desc {
+    font-size: 13px;
+    color: #778290;
+    margin: 0;
+}
+
+/* Form Styles */
+.profile-form .ant-form-item-label>label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333a44;
+}
+
+.profile-form .ant-input,
+.profile-form .ant-picker,
+.profile-form .ant-select-selector {
+    border-radius: 8px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    font-size: 13.5px;
+}
+
+.profile-submit-btn {
+    height: 42px;
+    padding: 0 28px;
+    background-color: #22242a;
+    border-color: #22242a;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(34, 36, 42, 0.15);
+    transition: all 0.25s ease;
+}
+
+.profile-submit-btn:hover {
+    background-color: #c89968 !important;
+    border-color: #c89968 !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 16px rgba(200, 153, 104, 0.35);
+}
+
+/* Address Cards Grid */
+.address-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 18px;
+    margin-top: 16px;
+}
+
+.address-card {
+    border: 1px solid #e2e7ec;
+    border-radius: 12px;
+    padding: 18px;
+    background-color: #ffffff;
+    position: relative;
+    transition: all 0.25s ease;
+}
+
+.address-card:hover {
+    border-color: #c89968;
+    box-shadow: 0 4px 14px rgba(200, 153, 104, 0.12);
+}
+
+.address-card.is-default {
+    border-color: #c89968;
+    background-color: #fffcf8;
+}
+
+.address-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.address-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #22242a;
+}
+
+.address-phone {
+    font-size: 13px;
+    color: #555e6b;
+    margin-bottom: 6px;
+}
+
+.address-detail {
+    font-size: 13px;
+    color: #667085;
+    line-height: 1.5;
+    margin-bottom: 14px;
+}
+
+.address-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    border-top: 1px dashed #e5eaf0;
+    padding-top: 10px;
+    font-size: 12.5px;
+}
+
+/* Order Stats Cards */
+.order-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.order-stat-card {
+    background: #f8fafc;
+    border: 1px solid #e6ebf1;
+    border-radius: 10px;
+    padding: 16px 12px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 20px;
+    font-weight: 800;
+    color: #22242a;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #778290;
+    margin-top: 2px;
+}
+
+/* Orders Table Styling */
+.order-row-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border: 1px solid #edf0f4;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    transition: background-color 0.2s ease;
+}
+
+.order-row-item:hover {
+    background-color: #fcfdfe;
+    border-color: #dce1e7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-sidebar {
+        position: static;
+    }
+
+    .order-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

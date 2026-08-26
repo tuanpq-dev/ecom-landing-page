@@ -1,0 +1,442 @@
+.sea-header {
+    height: auto;
+    line-height: normal;
+    padding: 0;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    font-family: 'Product Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+.sea-header-top {
+    background: #ffffff;
+    border-bottom: 1px solid #ebebeb;
+    padding: 14px 0;
+}
+
+.sea-header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+/* Brand Logo */
+.sea-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.sea-brand-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: #22242a;
+    color: #c89968;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.sea-brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.sea-brand-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: #22242a;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+.sea-brand-tagline {
+    font-size: 11px;
+    color: #888888;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+/* Search Bar */
+.sea-search-wrapper {
+    flex: 1;
+    max-width: 540px;
+    position: relative;
+}
+
+.sea-search-suggestions {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 1200;
+    overflow: hidden;
+}
+
+.sea-search-loading,
+.sea-search-empty {
+    padding: 16px;
+    text-align: center;
+    font-size: 13px;
+    color: #666666;
+}
+
+.sea-search-suggestions-list {
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.sea-search-suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.sea-search-suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.sea-search-suggestion-item:hover {
+    background: #fdfaf6;
+}
+
+.sea-search-item-img {
+    width: 42px;
+    height: 42px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+.sea-search-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.sea-search-item-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #22242a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sea-search-item-price {
+    font-size: 12px;
+    font-weight: 600;
+    color: #c89968;
+    margin-top: 2px;
+}
+
+.sea-search-view-all {
+    padding: 10px 14px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #22242a;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sea-search-view-all:hover {
+    background: #22242a;
+    color: #ffffff;
+}
+
+.sea-search-box {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #22242a;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #ffffff;
+    height: 40px;
+}
+
+.sea-search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0 14px;
+    font-size: 13px;
+    color: #333333;
+    background: transparent;
+    font-family: 'Product Sans', sans-serif !important;
+}
+
+.sea-search-btn {
+    background-color: #22242a !important;
+    border-color: #22242a !important;
+    color: #ffffff !important;
+    height: 40px !important;
+    width: 52px !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.sea-search-btn:hover {
+    background-color: #c89968 !important;
+    border-color: #c89968 !important;
+}
+
+/* Right Actions (Account & Cart) */
+.sea-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.sea-account-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #555555;
+}
+
+.sea-account-link {
+    cursor: pointer;
+    color: #444444;
+    font-weight: 500;
+    font-size: 13px;
+    transition: color 0.2s ease;
+}
+
+.sea-account-link:hover {
+    color: #c89968;
+}
+
+.sea-account-divider {
+    color: #cccccc;
+    font-size: 12px;
+}
+
+.sea-user-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #22242a;
+    font-size: 13px;
+}
+
+/* Mini Cart Widget */
+.sea-cart-widget {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 4px;
+    background: #f5f5f7;
+    transition: all 0.2s ease;
+}
+
+.sea-cart-widget:hover {
+    background: #ebebeb;
+}
+
+.sea-cart-icon {
+    font-size: 20px;
+    color: #22242a;
+}
+
+.sea-cart-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.sea-cart-label {
+    font-size: 11px;
+    color: #777777;
+    line-height: 1;
+}
+
+.sea-cart-count {
+    font-size: 13px;
+    font-weight: 700;
+    color: #c89968;
+    line-height: 1.2;
+}
+
+/* Main Navigation Bar */
+.sea-nav-bar {
+    height: 48px;
+    display: flex;
+    align-items: center;
+}
+
+.sea-nav-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+/* Category Vertical Button & Dropdown */
+.sea-category-wrapper {
+    position: relative;
+    width: 250px;
+}
+
+.sea-category-btn {
+    background: #c89968;
+    color: #ffffff;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.sea-category-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.sea-category-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 250px;
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    z-index: 1100;
+    border: 1px solid #e8e8e8;
+    border-top: none;
+}
+
+.sea-category-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #111111;
+    cursor: pointer;
+    border-bottom: 1px solid #f2f2f2;
+    transition: all 0.2s ease;
+}
+
+.sea-category-item:last-child {
+    border-bottom: none;
+}
+
+.sea-category-item:hover {
+    background: #fdfaf6;
+    color: #c89968;
+    padding-left: 22px;
+}
+
+/* Sub-category Mega Dropdown */
+.sea-subcategory-panel {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 220px;
+    background: #ffffff;
+    box-shadow: 4px 4px 14px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e8e8e8;
+    border-radius: 0 4px 4px 0;
+    padding: 6px 0;
+    z-index: 1200;
+}
+
+.sea-subcategory-item {
+    padding: 10px 16px;
+    font-size: 13px;
+    color: #111111;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sea-subcategory-item:hover {
+    background: #f8f9fa;
+    color: #c89968;
+}
+
+/* Route Navigation Links (Font Size: 14px) */
+.sea-nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sea-nav-route {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111111;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 14px 0;
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.sea-nav-route:hover,
+.sea-nav-route.active {
+    color: #c89968;
+}
+
+.sea-nav-route::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: #c89968;
+    transition: width 0.2s ease;
+}
+
+.sea-nav-route:hover::after,
+.sea-nav-route.active::after {
+    width: 100%;
+}

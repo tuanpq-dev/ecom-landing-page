@@ -1,0 +1,65 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = git@github.com:tuanpq-dev/e-landing.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+[branch "feature/footer"]
+	vscode-merge-base = origin/main
+	remote = origin
+	merge = refs/heads/feature/footer
+[branch "feature/home"]
+	vscode-merge-base = origin/main
+	remote = origin
+	merge = refs/heads/feature/home
+[branch "feature/product"]
+	vscode-merge-base = origin/main
+	remote = origin
+	merge = refs/heads/feature/product
+[branch "feature/about"]
+	vscode-merge-base = origin/main
+[branch "feature/contact"]
+	vscode-merge-base = origin/main
+[branch "fix/delete-news"]
+	vscode-merge-base = origin/main
+[branch "fix/auth"]
+	vscode-merge-base = origin/main
+	remote = origin
+	merge = refs/heads/fix/auth
+[branch "fix/api"]
+	vscode-merge-base = origin/main
+[branch "fix/vnd-to-usd"]
+	vscode-merge-base = origin/main
+	remote = origin
+	merge = refs/heads/fix/vnd-to-usd
+[branch "fix/ui-home"]
+	vscode-merge-base = origin/main
+	remote = origin
+	merge = refs/heads/fix/ui-home
+[branch "feature/login-google"]
+	vscode-merge-base = origin/main
+	remote = origin
+	merge = refs/heads/feature/login-google
+[branch "fix/ui-testimonial"]
+	vscode-merge-base = origin/main
+[branch "feature/forgot-password"]
+	vscode-merge-base = origin/main
+	remote = origin
+	merge = refs/heads/feature/forgot-password
+[branch "feature/comment"]
+	vscode-merge-base = origin/main
+	remote = origin
+	merge = refs/heads/feature/comment
+[branch "feature/socket"]
+	vscode-merge-base = origin/main
+	remote = origin
+	merge = refs/heads/feature/socket
+[branch "feature/search-product"]
+	vscode-merge-base = origin/main
+	remote = origin
+	merge = refs/heads/feature/search-product

@@ -1,0 +1,245 @@
+/* Order Management Main Container */
+.order-page-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 20px 60px 20px;
+    min-height: 78vh;
+}
+
+.order-header-section {
+    margin-bottom: 24px;
+}
+
+.order-page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #22242a;
+    margin: 8px 0 4px 0;
+}
+
+/* Filter & Search Bar Area */
+.order-filter-bar {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e6ebf1;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    padding: 16px 20px 0 20px;
+    margin-bottom: 24px;
+}
+
+.order-search-box {
+    margin-bottom: 16px;
+}
+
+/* Order List Items Cards */
+.order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.order-card {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e6ebf1;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    padding: 22px 24px;
+    transition: all 0.25s ease;
+}
+
+.order-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    border-color: #dce1e7;
+}
+
+/* Order Card Top Header Bar */
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #edf0f5;
+    margin-bottom: 16px;
+}
+
+.order-meta-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.order-id {
+    font-size: 15px;
+    font-weight: 700;
+    color: #22242a;
+}
+
+.order-date {
+    font-size: 12.5px;
+    color: #778290;
+}
+
+/* Products inside Order */
+.order-products-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.order-product-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed #f0f3f7;
+}
+
+.order-product-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.order-product-img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #edf0f4;
+}
+
+.order-product-info {
+    flex: 1;
+}
+
+.order-product-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #22242a;
+    margin-bottom: 4px;
+}
+
+.order-product-variant {
+    font-size: 12px;
+    color: #8892a0;
+}
+
+.order-product-qty {
+    font-size: 12.5px;
+    color: #555e6b;
+}
+
+.order-product-price {
+    font-size: 14px;
+    font-weight: 700;
+    color: #22242a;
+    text-align: right;
+}
+
+/* Order Card Bottom Summary Bar */
+.order-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #edf0f5;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.order-total-group {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.order-total-label {
+    font-size: 13px;
+    color: #555e6b;
+}
+
+.order-total-amount {
+    font-size: 18px;
+    font-weight: 800;
+    color: #c89968;
+}
+
+.order-actions-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Custom Buttons */
+.order-btn-primary {
+    background-color: #22242a;
+    border-color: #22242a;
+    color: #ffffff;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.order-btn-primary:hover {
+    background-color: #c89968 !important;
+    border-color: #c89968 !important;
+    color: #ffffff !important;
+}
+
+/* Modal Order Detail Customization */
+.order-detail-section {
+    margin-bottom: 20px;
+}
+
+.order-detail-subtitle {
+    font-size: 14px;
+    font-weight: 700;
+    color: #22242a;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.info-box-gray {
+    background-color: #f8fafc;
+    border: 1px solid #edf0f5;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #444c56;
+    line-height: 1.6;
+}
+
+/* Empty State */
+.empty-orders-card {
+    text-align: center;
+    padding: 60px 20px;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e6ebf1;
+    margin-top: 10px;
+}
+
+.empty-orders-icon {
+    font-size: 56px;
+    color: #d0d7e2;
+    margin-bottom: 14px;
+}
+
+/* Responsive */
+@media (max-width: 680px) {
+    .order-card-header,
+    .order-card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .order-actions-group {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .order-product-price {
+        text-align: left;
+    }
+}
