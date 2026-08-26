@@ -10,7 +10,6 @@ export function useProductReviews(productId?: number | string) {
     const [loading, setLoading] = useState<boolean>(false);
     const [activeFilter, setActiveFilter] = useState<string>("all");
 
-    // Fetch initial review data
     const fetchReviews = useCallback(async () => {
         if (!productId) return;
         setLoading(true);
@@ -33,7 +32,6 @@ export function useProductReviews(productId?: number | string) {
         fetchReviews();
     }, [fetchReviews]);
 
-    // Manage Socket connection & events lifecycle
     useEffect(() => {
         if (!productId) return;
 
@@ -60,7 +58,7 @@ export function useProductReviews(productId?: number | string) {
                     if (existingReplies.some((rep) => rep.id === formattedReply.id)) return r;
                     return {
                         ...r,
-                        replies: [...existingReplies, formattedReply],
+                        replies: [formattedReply, ...existingReplies],
                     };
                 })
             );
@@ -98,7 +96,7 @@ export function useProductReviews(productId?: number | string) {
                             r.id === reviewId
                                 ? {
                                     ...r,
-                                    replies: [...(r.replies || []).filter((rep) => rep.id !== formatted.id), formatted],
+                                    replies: [formatted, ...(r.replies || []).filter((rep) => rep.id !== formatted.id)],
                                 }
                                 : r
                         )
