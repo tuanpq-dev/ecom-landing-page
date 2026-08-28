@@ -319,13 +319,6 @@
     font-weight: 600;
 }
 
-.review-react-btn.active-heart {
-    background: #fef2f2;
-    border-color: #ef4444;
-    color: #dc2626;
-    font-weight: 600;
-}
-
 .review-reply-btn {
     display: flex;
     align-items: center;
@@ -341,7 +334,8 @@
     transition: background 0.2s, color 0.2s;
 }
 
-.review-reply-btn:hover {
+.review-reply-btn:hover,
+.review-reply-btn.active {
     background: #f1f5f9;
     color: #c89968;
 }

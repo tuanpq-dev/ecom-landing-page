@@ -20,7 +20,6 @@ export interface ReviewData {
     content: string;
     images?: string[];
     likesCount: number;
-    heartsCount: number;
-    userReaction?: "like" | "heart" | null;
+    isLiked?: boolean;
     replies: ReplyItem[];
 }

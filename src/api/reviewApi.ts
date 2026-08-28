@@ -14,3 +14,13 @@ export const createReplyApi = async (payload: CreateReplyPayload) => {
 export const getReviewsByProductIdApi = async (productId: number | string) => {
     return axiosClient.get(`${URL}/review/${productId}`);
 };
+
+export interface LikeReviewPayload {
+    reviewId: number;
+    isLiked: boolean;
+}
+
+export const likeReviewApi = async (payload: LikeReviewPayload) => {
+    return axiosClient.post(`${URL}/review/like`, payload);
+};
+

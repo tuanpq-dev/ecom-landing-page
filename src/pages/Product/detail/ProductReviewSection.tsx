@@ -22,7 +22,7 @@ export function ProductReviewSection({ productId }: ProductReviewSectionProps) {
         activeFilter,
         setActiveFilter,
         handleSendReply,
-        handleToggleReaction,
+        handleToggleLike,
         handleToggleReplyLike,
         stats,
     } = useProductReviews(productId);
@@ -71,7 +71,7 @@ export function ProductReviewSection({ productId }: ProductReviewSectionProps) {
                                 key={rev.id}
                                 review={rev}
                                 onSubmitReply={handleSendReply}
-                                onToggleReaction={handleToggleReaction}
+                                onToggleLike={handleToggleLike}
                                 onToggleReplyLike={handleToggleReplyLike}
                                 onPreviewImage={setPreviewImage}
                             />

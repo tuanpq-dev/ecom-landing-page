@@ -22,7 +22,7 @@ export function mapRawReplyToReplyItem(rep: any, fallbackReviewId?: number): Rep
     };
 }
 
-export function mapRawReviewToReviewData(item: any): ReviewData {
+export function mapRawReviewToReviewData(item: any, currentUserId?: number | string | null): ReviewData {
     const userName =
         item.userName ||
         item.user?.fullname ||
@@ -51,6 +51,23 @@ export function mapRawReviewToReviewData(item: any): ReviewData {
         ];
     }
 
+    const likesList = Array.isArray(item.likes) ? item.likes : [];
+    const likesCount = typeof item.likesCount === "number" ? item.likesCount : likesList.length;
+
+    let isLiked = false;
+    if (typeof item.isLiked === "boolean") {
+        isLiked = item.isLiked;
+    } else if (currentUserId && likesList.length > 0) {
+        isLiked = likesList.some(
+            (like: any) =>
+                like.userId !== undefined &&
+                like.userId !== null &&
+                String(like.userId) === String(currentUserId)
+        );
+    } else if (typeof item.userReaction === "string") {
+        isLiked = item.userReaction === "like";
+    }
+
     return {
         id: item.id,
         userName,
@@ -61,9 +78,8 @@ export function mapRawReviewToReviewData(item: any): ReviewData {
         variantInfo: item.variantInfo || "",
         content: item.content || "Người dùng không để lại bình luận.",
         images: item.images || [],
-        likesCount: item.likesCount || 0,
-        heartsCount: item.heartsCount || 0,
-        userReaction: item.userReaction || null,
+        likesCount,
+        isLiked,
         replies,
     };
 }
