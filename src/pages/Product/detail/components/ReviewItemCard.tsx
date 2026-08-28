@@ -5,8 +5,6 @@ import {
     CheckCircleFilled,
     LikeFilled,
     LikeOutlined,
-    HeartFilled,
-    HeartOutlined,
     MessageOutlined,
     SendOutlined,
 } from "@ant-design/icons";
@@ -15,7 +13,7 @@ import { ReviewReplyList } from "./ReviewReplyList";
 
 interface ReviewItemCardProps {
     review: ReviewData;
-    onToggleReaction: (reviewId: number, type: "like" | "heart") => void;
+    onToggleLike?: (reviewId: number) => void;
     onSubmitReply: (reviewId: number, content: string) => Promise<void> | void;
     onToggleReplyLike: (reviewId: number, replyId: number) => void;
     onPreviewImage?: (imgUrl: string) => void;
@@ -23,7 +21,7 @@ interface ReviewItemCardProps {
 
 export function ReviewItemCard({
     review,
-    onToggleReaction,
+    onToggleLike,
     onSubmitReply,
     onToggleReplyLike,
     onPreviewImage,
@@ -102,26 +100,17 @@ export function ReviewItemCard({
             <div className="review-actions-bar">
                 <div className="review-reactions-group">
                     <button
-                        className={`review-react-btn ${review.userReaction === "like" ? "active-like" : ""}`}
-                        onClick={() => onToggleReaction(review.id, "like")}
+                        className={`review-react-btn ${review.isLiked ? "active-like" : ""}`}
+                        onClick={() => onToggleLike?.(review.id)}
                         title="Thích"
                     >
-                        {review.userReaction === "like" ? <LikeFilled /> : <LikeOutlined />}
+                        {review.isLiked ? <LikeFilled /> : <LikeOutlined />}
                         <span>Thích {review.likesCount > 0 && `(${review.likesCount})`}</span>
-                    </button>
-
-                    <button
-                        className={`review-react-btn ${review.userReaction === "heart" ? "active-heart" : ""}`}
-                        onClick={() => onToggleReaction(review.id, "heart")}
-                        title="Yêu thích"
-                    >
-                        {review.userReaction === "heart" ? <HeartFilled /> : <HeartOutlined />}
-                        <span>Yêu thích {review.heartsCount > 0 && `(${review.heartsCount})`}</span>
                     </button>
                 </div>
 
                 <button
-                    className="review-reply-btn"
+                    className={`review-reply-btn ${isReplying ? "active" : ""}`}
                     onClick={() => setIsReplying(!isReplying)}
                 >
                     <MessageOutlined />
@@ -129,39 +118,40 @@ export function ReviewItemCard({
                 </button>
             </div>
 
-            {/* Inline Reply Input Box */}
+            {/* Collapsible Reply Section (Input Form & Replies List) */}
             {isReplying && (
-                <div className="review-reply-input-box">
-                    <Input.TextArea
-                        rows={2}
-                        placeholder={`Viết phản hồi cho ${review.userName}...`}
-                        value={replyText}
-                        onChange={(e) => setReplyText(e.target.value)}
-                        autoFocus
-                    />
-                    <div className="review-reply-input-actions">
-                        <Button size="small" onClick={() => setIsReplying(false)}>
-                            Hủy
-                        </Button>
-                        <Button
-                            type="primary"
-                            size="small"
-                            icon={<SendOutlined />}
-                            loading={submittingReply}
-                            onClick={handleSendReply}
-                        >
-                            Gửi
-                        </Button>
+                <div className="review-reply-section">
+                    <div className="review-reply-input-box">
+                        <Input.TextArea
+                            rows={2}
+                            placeholder={`Viết phản hồi cho ${review.userName}...`}
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            autoFocus
+                        />
+                        <div className="review-reply-input-actions">
+                            <Button size="small" onClick={() => setIsReplying(false)}>
+                                Đóng
+                            </Button>
+                            <Button
+                                type="primary"
+                                size="small"
+                                icon={<SendOutlined />}
+                                loading={submittingReply}
+                                onClick={handleSendReply}
+                            >
+                                Gửi
+                            </Button>
+                        </div>
                     </div>
+
+                    <ReviewReplyList
+                        reviewId={review.id}
+                        replies={review.replies}
+                        onToggleReplyLike={onToggleReplyLike}
+                    />
                 </div>
             )}
-
-            {/* Replies List */}
-            <ReviewReplyList
-                reviewId={review.id}
-                replies={review.replies}
-                onToggleReplyLike={onToggleReplyLike}
-            />
         </div>
     );
 }

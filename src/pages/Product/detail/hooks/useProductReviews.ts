@@ -1,9 +1,22 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { message } from "antd";
 import { socketIO } from "../../../../socket/socket.io";
-import { getReviewsByProductIdApi, createReplyApi } from "../../../../api/reviewApi";
+import { getReviewsByProductIdApi, createReplyApi, likeReviewApi } from "../../../../api/reviewApi";
 import type { ReviewData } from "../components/types";
 import { mapRawReviewToReviewData, mapRawReplyToReplyItem } from "../utils/reviewMapper";
+
+const getCurrentUserId = (): number | string | null => {
+    try {
+        const savedUser = localStorage.getItem("user");
+        if (savedUser) {
+            const parsed = JSON.parse(savedUser);
+            return parsed?.id ?? parsed?.sub ?? parsed?.userId ?? null;
+        }
+    } catch {
+        return null;
+    }
+    return null;
+};
 
 export function useProductReviews(productId?: number | string) {
     const [reviews, setReviews] = useState<ReviewData[]>([]);
@@ -17,7 +30,8 @@ export function useProductReviews(productId?: number | string) {
             const res: any = await getReviewsByProductIdApi(productId);
             const rawList = Array.isArray(res) ? res : res?.data || [];
             if (Array.isArray(rawList)) {
-                const mapped = rawList.map((item: any) => mapRawReviewToReviewData(item));
+                const currentUserId = getCurrentUserId();
+                const mapped = rawList.map((item: any) => mapRawReviewToReviewData(item, currentUserId));
                 setReviews(mapped);
             }
         } catch (err) {
@@ -40,7 +54,8 @@ export function useProductReviews(productId?: number | string) {
 
         const handleNewReview = (rawReview: any) => {
             if (!rawReview) return;
-            const formatted = mapRawReviewToReviewData(rawReview);
+            const currentUserId = getCurrentUserId();
+            const formatted = mapRawReviewToReviewData(rawReview, currentUserId);
             setReviews((prev) => {
                 if (prev.some((r) => r.id === formatted.id)) return prev;
                 return [formatted, ...prev];
@@ -64,15 +79,28 @@ export function useProductReviews(productId?: number | string) {
             );
         };
 
+        const handleReviewLiked = (data: { reviewId: number; likeCount: number; isLiked?: boolean; userId?: number }) => {
+            if (!data || !data.reviewId || typeof data.likeCount !== "number") return;
+            setReviews((prev) =>
+                prev.map((r) => {
+                    if (r.id !== data.reviewId) return r;
+                    return {
+                        ...r,
+                        likesCount: data.likeCount,
+                    };
+                })
+            );
+        };
+
         socket.on("new_review", handleNewReview);
         socket.on("new_reply", handleNewReply);
-        socket.on("review:replied", handleNewReply);
+        socket.on("review_liked", handleReviewLiked);
 
         return () => {
             socket.emit("leave_post", { productId });
             socket.off("new_review", handleNewReview);
             socket.off("new_reply", handleNewReply);
-            socket.off("review:replied", handleNewReply);
+            socket.off("review_liked", handleReviewLiked);
         };
     }, [productId]);
 
@@ -111,36 +139,64 @@ export function useProductReviews(productId?: number | string) {
         [productId]
     );
 
-    const handleToggleReaction = useCallback((reviewId: number, type: "like" | "heart") => {
+    const handleToggleLike = useCallback(async (reviewId: number) => {
+        const targetReview = reviews.find((item) => item.id === reviewId);
+        if (!targetReview) return;
+
+        const previousIsLiked = Boolean(targetReview.isLiked);
+        const nextIsLiked = !previousIsLiked;
+        const previousLikesCount = targetReview.likesCount;
+        const nextLikesCount = nextIsLiked
+            ? previousLikesCount + 1
+            : Math.max(0, previousLikesCount - 1);
+
+        // Optimistic state update
         setReviews((prev) =>
             prev.map((item) => {
                 if (item.id !== reviewId) return item;
-
-                let newLikes = item.likesCount;
-                let newHearts = item.heartsCount;
-                let newReaction: "like" | "heart" | null = type;
-
-                if (item.userReaction === type) {
-                    newReaction = null;
-                    if (type === "like") newLikes = Math.max(0, newLikes - 1);
-                    if (type === "heart") newHearts = Math.max(0, newHearts - 1);
-                } else {
-                    if (item.userReaction === "like") newLikes = Math.max(0, newLikes - 1);
-                    if (item.userReaction === "heart") newHearts = Math.max(0, newHearts - 1);
-
-                    if (type === "like") newLikes += 1;
-                    if (type === "heart") newHearts += 1;
-                }
-
                 return {
                     ...item,
-                    likesCount: newLikes,
-                    heartsCount: newHearts,
-                    userReaction: newReaction,
+                    isLiked: nextIsLiked,
+                    likesCount: nextLikesCount,
                 };
             })
         );
-    }, []);
+
+        try {
+            const res: any = await likeReviewApi({
+                reviewId,
+                isLiked: nextIsLiked,
+            });
+
+            if (res && typeof res.likeCount === "number") {
+                const serverIsLiked = typeof res.isLiked === "boolean" ? res.isLiked : nextIsLiked;
+                setReviews((prev) =>
+                    prev.map((item) => {
+                        if (item.id !== reviewId) return item;
+                        return {
+                            ...item,
+                            isLiked: serverIsLiked,
+                            likesCount: res.likeCount,
+                        };
+                    })
+                );
+            }
+        } catch (err: any) {
+            console.error("Like review error:", err);
+            message.error(typeof err === "string" ? err : "Đã có lỗi xảy ra khi thích đánh giá!");
+            // Revert state if request failed
+            setReviews((prev) =>
+                prev.map((item) => {
+                    if (item.id !== reviewId) return item;
+                    return {
+                        ...item,
+                        isLiked: previousIsLiked,
+                        likesCount: previousLikesCount,
+                    };
+                })
+            );
+        }
+    }, [reviews]);
 
     const handleToggleReplyLike = useCallback((reviewId: number, replyId: number) => {
         setReviews((prev) =>
@@ -208,7 +264,7 @@ export function useProductReviews(productId?: number | string) {
         activeFilter,
         setActiveFilter,
         handleSendReply,
-        handleToggleReaction,
+        handleToggleLike,
         handleToggleReplyLike,
         stats,
         refetch: fetchReviews,
