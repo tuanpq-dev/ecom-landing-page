@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { message } from "antd";
 import { socketIO } from "../../../../socket/socket.io";
-import { getReviewsByProductIdApi, createReplyApi, likeReviewApi } from "../../../../api/reviewApi";
+import { getReviewsByProductIdApi, createReplyApi, likeReviewApi, reactReplyApi } from "../../../../api/reviewApi";
 import type { ReviewData } from "../components/types";
 import { mapRawReviewToReviewData, mapRawReplyToReplyItem } from "../utils/reviewMapper";
 
@@ -64,7 +64,8 @@ export function useProductReviews(productId?: number | string) {
 
         const handleNewReply = (data: { reviewId: number; reply: any }) => {
             if (!data || !data.reviewId || !data.reply) return;
-            const formattedReply = mapRawReplyToReplyItem(data.reply, data.reviewId);
+            const currentUserId = getCurrentUserId();
+            const formattedReply = mapRawReplyToReplyItem(data.reply, data.reviewId, currentUserId);
 
             setReviews((prev) =>
                 prev.map((r) => {
@@ -92,15 +93,38 @@ export function useProductReviews(productId?: number | string) {
             );
         };
 
+        const handleReactReply = (data: { replyId: number; reviewId?: number; likeCount: number; isLiked?: boolean; userId?: number }) => {
+            if (!data || !data.replyId || typeof data.likeCount !== "number") return;
+            setReviews((prev) =>
+                prev.map((r) => {
+                    if (data.reviewId && r.id !== data.reviewId) return r;
+                    if (!r.replies || !r.replies.some((rep) => rep.id === data.replyId)) return r;
+
+                    return {
+                        ...r,
+                        replies: r.replies.map((reply) => {
+                            if (reply.id !== data.replyId) return reply;
+                            return {
+                                ...reply,
+                                likesCount: data.likeCount,
+                            };
+                        }),
+                    };
+                })
+            );
+        };
+
         socket.on("new_review", handleNewReview);
         socket.on("new_reply", handleNewReply);
         socket.on("review_liked", handleReviewLiked);
+        socket.on("reply_liked", handleReactReply);
 
         return () => {
             socket.emit("leave_post", { productId });
             socket.off("new_review", handleNewReview);
             socket.off("new_reply", handleNewReply);
             socket.off("review_liked", handleReviewLiked);
+            socket.off("reply_liked", handleReactReply);
         };
     }, [productId]);
 
@@ -118,7 +142,8 @@ export function useProductReviews(productId?: number | string) {
 
                 if (res?.data || res?.reply) {
                     const newReplyObj = res.data || res.reply;
-                    const formatted = mapRawReplyToReplyItem(newReplyObj, reviewId);
+                    const currentUserId = getCurrentUserId();
+                    const formatted = mapRawReplyToReplyItem(newReplyObj, reviewId, currentUserId);
                     setReviews((prev) =>
                         prev.map((r) =>
                             r.id === reviewId
@@ -182,9 +207,7 @@ export function useProductReviews(productId?: number | string) {
                 );
             }
         } catch (err: any) {
-            console.error("Like review error:", err);
             message.error(typeof err === "string" ? err : "Đã có lỗi xảy ra khi thích đánh giá!");
-            // Revert state if request failed
             setReviews((prev) =>
                 prev.map((item) => {
                     if (item.id !== reviewId) return item;
@@ -198,7 +221,19 @@ export function useProductReviews(productId?: number | string) {
         }
     }, [reviews]);
 
-    const handleToggleReplyLike = useCallback((reviewId: number, replyId: number) => {
+    const handleToggleReplyLike = useCallback(async (reviewId: number, replyId: number) => {
+        const targetReview = reviews.find((item) => item.id === reviewId);
+        if (!targetReview) return;
+        const targetReply = targetReview.replies?.find((reply) => reply.id === replyId);
+        if (!targetReply) return;
+
+        const previousIsLiked = Boolean(targetReply.isLiked);
+        const nextIsLiked = !previousIsLiked;
+        const previousLikesCount = targetReply.likesCount;
+        const nextLikesCount = nextIsLiked
+            ? previousLikesCount + 1
+            : Math.max(0, previousLikesCount - 1);
+
         setReviews((prev) =>
             prev.map((item) => {
                 if (item.id !== reviewId) return item;
@@ -207,17 +242,63 @@ export function useProductReviews(productId?: number | string) {
                     ...item,
                     replies: item.replies.map((reply) => {
                         if (reply.id !== replyId) return reply;
-                        const isLiked = !reply.isLiked;
                         return {
                             ...reply,
-                            isLiked,
-                            likesCount: isLiked ? reply.likesCount + 1 : Math.max(0, reply.likesCount - 1),
+                            isLiked: nextIsLiked,
+                            likesCount: nextLikesCount,
                         };
                     }),
                 };
             })
         );
-    }, []);
+
+        try {
+            const res: any = await reactReplyApi({
+                replyId,
+                isLiked: nextIsLiked,
+            });
+
+            if (res && typeof res.likeCount === "number") {
+                const serverIsLiked = typeof res.isLiked === "boolean" ? res.isLiked : nextIsLiked;
+                setReviews((prev) =>
+                    prev.map((item) => {
+                        if (item.id !== reviewId) return item;
+
+                        return {
+                            ...item,
+                            replies: item.replies.map((reply) => {
+                                if (reply.id !== replyId) return reply;
+                                return {
+                                    ...reply,
+                                    isLiked: serverIsLiked,
+                                    likesCount: res.likeCount,
+                                };
+                            }),
+                        };
+                    })
+                );
+            }
+        } catch (err: any) {
+            message.error(typeof err === "string" ? err : "Đã có lỗi xảy ra khi thích phản hồi!");
+            setReviews((prev) =>
+                prev.map((item) => {
+                    if (item.id !== reviewId) return item;
+
+                    return {
+                        ...item,
+                        replies: item.replies.map((reply) => {
+                            if (reply.id !== replyId) return reply;
+                            return {
+                                ...reply,
+                                isLiked: previousIsLiked,
+                                likesCount: previousLikesCount,
+                            };
+                        }),
+                    };
+                })
+            );
+        }
+    }, [reviews]);
 
     const filteredReviews = useMemo(() => {
         return reviews.filter((r) => {

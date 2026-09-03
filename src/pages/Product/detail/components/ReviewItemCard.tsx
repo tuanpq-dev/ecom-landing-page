@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { Avatar, Tag, Rate, Input, Button, message } from "antd";
+import { Avatar, Rate, Input, Button, message } from "antd";
 import {
     UserOutlined,
-    CheckCircleFilled,
     LikeFilled,
     LikeOutlined,
     MessageOutlined,
@@ -63,11 +62,6 @@ export function ReviewItemCard({
                 <div className="review-user-meta">
                     <div className="review-user-name-row">
                         <span className="review-user-name">{review.userName}</span>
-                        {review.isVerified && (
-                            <Tag color="success" icon={<CheckCircleFilled />} className="review-verified-badge">
-                                Đã mua hàng
-                            </Tag>
-                        )}
                     </div>
 
                     <div className="review-stars-date-row">

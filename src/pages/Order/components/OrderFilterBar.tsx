@@ -18,9 +18,9 @@ function OrderFilterBarComponent({
     const tabItems = useMemo(
         () => [
             { key: "all", label: "Tất cả đơn hàng" },
-            { key: "PROCESSING", label: "Chờ xử lý" },
+            { key: "PENDING", label: "Chờ xác nhận" },
+            { key: "PROCESSING", label: "Đang xử lý" },
             { key: "SHIPPING", label: "Đang giao" },
-            { key: "DELIVERED", label: "Đã giao" },
             { key: "COMPLETED", label: "Hoàn thành" },
             { key: "CANCELLED", label: "Đã hủy" },
         ],

@@ -48,7 +48,6 @@ function OrderReviewModalComponent({ order, onClose }: OrderReviewModalProps) {
 
     const handleSubmit = async (values: any) => {
         try {
-            console.log(values);
             await axiosClient.post(`${URL}/review/${order.id}`, values)
             message.success("Cảm ơn bạn đã gửi đánh giá sản phẩm!");
         } catch (err) {
@@ -90,7 +89,6 @@ function OrderReviewModalComponent({ order, onClose }: OrderReviewModalProps) {
             >
                 <div className="review-modal-body">
                     {order.items?.map((item, index) => {
-                        console.log(order);
                         const imgUrl = parseOrderItemImage(item);
                         return (
                             <div key={item.id} className="review-item-card">

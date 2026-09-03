@@ -68,7 +68,7 @@ function Order() {
             }
 
             const searchParam = searchQuery.trim() ? `?search=${encodeURIComponent(searchQuery.trim())}` : "";
-            const endpoint = userId ? `${URL}/order/user/${userId}${searchParam}` : `${URL}/order/search${searchParam}`;
+            const endpoint = userId ? `${URL}/order/user/my-orders` : `${URL}/order/search${searchParam}`;
 
             const res: any = await axiosClient.post(endpoint, payload);
 

@@ -1,7 +1,11 @@
 import { formatDateTime } from "../../../../utils/dateUtils";
 import type { ReviewData, ReplyItem } from "../components/types";
 
-export function mapRawReplyToReplyItem(rep: any, fallbackReviewId?: number): ReplyItem {
+export function mapRawReplyToReplyItem(
+    rep: any,
+    fallbackReviewId?: number,
+    currentUserId?: number | string | null
+): ReplyItem {
     const isSeller = Boolean(rep.isSeller || rep.admin || rep.seller);
     const userName =
         rep.userName ||
@@ -10,6 +14,21 @@ export function mapRawReplyToReplyItem(rep: any, fallbackReviewId?: number): Rep
         (isSeller ? "Shop Phản Hồi" : rep.user?.fullname || rep.user?.name || "Khách hàng");
     const avatar = rep.avatar || rep.admin?.avatar || rep.user?.avatar || "";
 
+    const likesList = Array.isArray(rep.likes) ? rep.likes : [];
+    const likesCount = typeof rep.likesCount === "number" ? rep.likesCount : likesList.length;
+
+    let isLiked = false;
+    if (typeof rep.isLiked === "boolean") {
+        isLiked = rep.isLiked;
+    } else if (currentUserId && likesList.length > 0) {
+        isLiked = likesList.some(
+            (like: any) =>
+                like.userId !== undefined &&
+                like.userId !== null &&
+                String(like.userId) === String(currentUserId)
+        );
+    }
+
     return {
         id: rep.id ?? (fallbackReviewId ? fallbackReviewId * 1000 + 1 : Date.now()),
         userName,
@@ -17,8 +36,8 @@ export function mapRawReplyToReplyItem(rep: any, fallbackReviewId?: number): Rep
         isSeller,
         createdAt: formatDateTime(rep.createdAt || rep.updatedAt),
         content: rep.content || rep.reply || "",
-        likesCount: rep.likesCount || 0,
-        isLiked: Boolean(rep.isLiked),
+        likesCount,
+        isLiked,
     };
 }
 
@@ -34,7 +53,7 @@ export function mapRawReviewToReviewData(item: any, currentUserId?: number | str
 
     let replies: ReplyItem[] = [];
     if (Array.isArray(item.replies)) {
-        replies = item.replies.map((rep: any) => mapRawReplyToReplyItem(rep, item.id));
+        replies = item.replies.map((rep: any) => mapRawReplyToReplyItem(rep, item.id, currentUserId));
     } else if (item.reply) {
         replies = [
             mapRawReplyToReplyItem(
@@ -46,7 +65,8 @@ export function mapRawReviewToReviewData(item: any, currentUserId?: number | str
                     content: item.reply,
                     likesCount: 0,
                 },
-                item.id
+                item.id,
+                currentUserId
             ),
         ];
     }
