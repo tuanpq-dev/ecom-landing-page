@@ -20,7 +20,16 @@ export interface LikeReviewPayload {
     isLiked: boolean;
 }
 
+export interface ReactReplyPayload {
+    replyId: number;
+    isLiked: boolean;
+}
+
 export const likeReviewApi = async (payload: LikeReviewPayload) => {
     return axiosClient.post(`${URL}/review/like`, payload);
+};
+
+export const reactReplyApi = async (payload: ReactReplyPayload) => {
+    return axiosClient.post(`${URL}/review/react-reply`, payload);
 };
 

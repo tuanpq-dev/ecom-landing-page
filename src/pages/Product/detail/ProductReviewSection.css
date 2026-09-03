@@ -215,13 +215,6 @@
     color: #1a202c;
 }
 
-.review-verified-badge {
-    font-size: 11px;
-    border-radius: 12px;
-    padding: 0 8px;
-    margin: 0;
-}
-
 .review-stars-date-row {
     display: flex;
     align-items: center;
