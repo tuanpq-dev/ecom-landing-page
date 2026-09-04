@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Breadcrumb, Button, Tag, Popconfirm, message } from "antd";
+import { Breadcrumb, Button, Tag, Popconfirm, message, Modal } from "antd";
 import {
     HeartFilled,
     HeartOutlined,
@@ -9,7 +9,7 @@ import {
     CheckOutlined,
     ArrowLeftOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import config from "../../config/config";
 import "./Wishlist.css";
 
@@ -79,6 +79,7 @@ const initialWishlistItems: WishlistItem[] = [
 
 function Wishlist() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [wishlist, setWishlist] = useState<WishlistItem[]>(initialWishlistItems);
 
     const formatCurrency = (amount: number) => {
@@ -93,6 +94,22 @@ function Wishlist() {
 
     // Add single item to cart
     const handleAddToCart = (item: WishlistItem) => {
+        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+        if (!token) {
+            Modal.confirm({
+                title: "Yêu cầu đăng nhập",
+                content: "Vui lòng đăng nhập tài khoản để thêm sản phẩm vào giỏ hàng.",
+                okText: "Đăng nhập ngay",
+                cancelText: "Để sau",
+                centered: true,
+                okButtonProps: { style: { background: "#c89968", borderColor: "#c89968" } },
+                onOk: () => {
+                    navigate(`/${config.routes.LOGIN}?redirect=${encodeURIComponent(location.pathname)}`);
+                },
+            });
+            return;
+        }
+
         if (!item.inStock) {
             message.warning("Sản phẩm hiện đang tạm hết hàng!");
             return;
@@ -102,6 +119,22 @@ function Wishlist() {
 
     // Add all in-stock items to cart
     const handleAddAllToCart = () => {
+        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+        if (!token) {
+            Modal.confirm({
+                title: "Yêu cầu đăng nhập",
+                content: "Vui lòng đăng nhập tài khoản để thêm sản phẩm vào giỏ hàng.",
+                okText: "Đăng nhập ngay",
+                cancelText: "Để sau",
+                centered: true,
+                okButtonProps: { style: { background: "#c89968", borderColor: "#c89968" } },
+                onOk: () => {
+                    navigate(`/${config.routes.LOGIN}?redirect=${encodeURIComponent(location.pathname)}`);
+                },
+            });
+            return;
+        }
+
         const inStockItems = wishlist.filter((item) => item.inStock);
         if (inStockItems.length === 0) {
             message.warning("Không có sản phẩm nào còn hàng để thêm vào giỏ!");

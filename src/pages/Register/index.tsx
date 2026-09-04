@@ -8,7 +8,7 @@ import {
     UserAddOutlined,
     CheckCircleOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import FormInput from "../../@crema/core/Form/FormInput";
 import config from "../../config/config";
 import { URL } from "../../config/apiUrl";
@@ -26,8 +26,14 @@ interface RegisterFormValues {
 
 const Register: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [loading, setLoading] = useState(false);
     const [passwordValue, setPasswordValue] = useState("");
+
+    const redirectParam = new URLSearchParams(location.search).get("redirect");
+    const loginPath = redirectParam
+        ? `/${config.routes.LOGIN}?redirect=${encodeURIComponent(redirectParam)}`
+        : `/${config.routes.LOGIN}`;
 
     // Calculate password strength indicator
     const getPasswordStrength = (pass: string) => {
@@ -58,7 +64,7 @@ const Register: React.FC = () => {
                 icon: <CheckCircleOutlined style={{ color: "#52c41a" }} />,
                 duration: 4,
             });
-            navigate(`/${config.routes.LOGIN}`);
+            navigate(loginPath);
         } catch (err: any) {
             message.error(typeof err === "string" ? err : err.message || "Đăng ký thất bại. Vui lòng thử lại!");
         } finally {
@@ -277,7 +283,7 @@ const Register: React.FC = () => {
                         onClick={() => message.info("Tính năng Đăng ký nhanh với Facebook đang phát triển")}
                     >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2">
-                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                         </svg>
                         <span>Facebook</span>
                     </button>
@@ -288,7 +294,7 @@ const Register: React.FC = () => {
                     <span>Đã có tài khoản?</span>
                     <span
                         className="auth-footer-link"
-                        onClick={() => navigate(`/${config.routes.LOGIN}`)}
+                        onClick={() => navigate(loginPath)}
                     >
                         Đăng nhập ngay
                     </span>

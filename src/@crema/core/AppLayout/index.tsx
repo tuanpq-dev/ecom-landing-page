@@ -11,11 +11,6 @@ type AppLayoutProps = React.PropsWithChildren;
 function AppLayout({ children }: AppLayoutProps) {
     const location = useLocation();
 
-    // Scroll to top of window on route change
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [location.pathname, location.search]);
-
     // Check if the current path is Auth page (Login, Register, Forgot Password, Reset Password)
     const isAuthPage =
         location.pathname === `/${config.routes.LOGIN}` ||
@@ -26,6 +21,14 @@ function AppLayout({ children }: AppLayoutProps) {
         location.pathname.startsWith(`/${config.routes.REGISTER}`) ||
         location.pathname.startsWith(`/${config.routes.FORGOT_PASSWORD}`) ||
         location.pathname.startsWith(`/${config.routes.RESET_PASSWORD}`);
+
+    // Scroll to top of window on route change & track last visited non-auth page
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        if (!isAuthPage && location.pathname !== "/") {
+            sessionStorage.setItem("lastVisitedPage", location.pathname + location.search);
+        }
+    }, [location.pathname, location.search, isAuthPage]);
 
     if (isAuthPage) {
         return (

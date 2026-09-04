@@ -54,11 +54,23 @@ axiosClient.interceptors.response.use(
             sessionStorage.removeItem("accessToken");
             localStorage.removeItem("user");
             sessionStorage.removeItem("user");
+            window.dispatchEvent(new Event("auth-change"));
             window.dispatchEvent(new Event("cart-change"));
+
+            const requestUrl = error.config?.url || "";
+            // If it's auth/me check, don't force redirect user out when viewing products
+            if (requestUrl.includes("/auth/me")) {
+                return Promise.reject("Chưa đăng nhập hoặc phiên đăng nhập đã hết hạn!");
+            }
+
+            const currentPath = window.location.pathname + window.location.search;
+            const redirectUrl = currentPath && currentPath !== "/login" && !currentPath.startsWith("/login?")
+                ? `/login?redirect=${encodeURIComponent(currentPath)}`
+                : "/login";
             if (navigateFn) {
-                navigateFn("/login");
+                navigateFn(redirectUrl);
             } else {
-                window.location.href = "/login";
+                window.location.href = redirectUrl;
             }
             return Promise.reject("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!");
         }
