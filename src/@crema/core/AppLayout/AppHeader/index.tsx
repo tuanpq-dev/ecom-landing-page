@@ -263,8 +263,8 @@ function AppHeader() {
     ];
 
     // Mini Cart Popover Content
-    const totalCartCount = cartItems.reduce((acc, item) => acc + (item.quantity || 1), 0);
-    const totalCartPrice = cartItems.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 1), 0);
+    const totalCartCount = cartItems.length;
+    const totalCartPrice = cartItems.reduce((acc, item) => acc + (item.price || 0) * (item.quantity ?? 0), 0);
 
     const cartPopoverContent = (
         <div style={{ width: 340, padding: 4 }}>

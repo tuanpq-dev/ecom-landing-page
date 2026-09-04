@@ -49,6 +49,19 @@ axiosClient.interceptors.response.use(
         return response;
     },
     (error) => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem("accessToken");
+            sessionStorage.removeItem("accessToken");
+            localStorage.removeItem("user");
+            sessionStorage.removeItem("user");
+            window.dispatchEvent(new Event("cart-change"));
+            if (navigateFn) {
+                navigateFn("/login");
+            } else {
+                window.location.href = "/login";
+            }
+            return Promise.reject("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!");
+        }
         if (error.response?.status === 403) {
             if (navigateFn) {
                 navigateFn("/403");

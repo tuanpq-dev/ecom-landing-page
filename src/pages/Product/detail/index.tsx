@@ -5,6 +5,7 @@ import { Spin, message } from "antd";
 import { parseProductImage, type ApiProduct } from "../index";
 import { URL } from "../../../config/apiUrl";
 import axiosClient from "../../../api/axiosClient";
+import { addToCartApi } from "../../../api/cartApi";
 import './DetailProduct.css';
 import ProductReviewSection from "./ProductReviewSection";
 
@@ -159,8 +160,10 @@ function ProductDetail() {
             : 50);
 
     // Handle Add to Cart
-    const handleAddToCart = () => {
+    const handleAddToCart = async () => {
         if (!product) return;
+
+        const targetVariant = currentVariant || (product.variants && product.variants[0]);
 
         if (currentStock <= 0) {
             message.error("Biến thể sản phẩm này đã hết hàng!");
@@ -182,8 +185,8 @@ function ProductDetail() {
             selectedColor ? `Màu ${selectedColor}` : ""
         ].filter(Boolean).join(" / ") || "Mặc định";
 
-        const cartItemId = currentVariant
-            ? `prod_${product.id}_var_${currentVariant.id}`
+        const cartItemId = targetVariant?.id
+            ? `prod_${product.id}_var_${targetVariant.id}`
             : `prod_${product.id}_${variantLabel}`;
 
         const existingItemIndex = cartItems.findIndex((item: any) =>
@@ -200,6 +203,19 @@ function ProductDetail() {
             return;
         }
 
+        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+        if (token && targetVariant?.id) {
+            try {
+                await addToCartApi({
+                    variantId: targetVariant.id,
+                    quantity: qty,
+                });
+            } catch (err: any) {
+                message.error(typeof err === "string" ? err : "Thêm vào giỏ hàng thất bại!");
+                return;
+            }
+        }
+
         if (existingItemIndex > -1) {
             cartItems[existingItemIndex].quantity += qty;
             cartItems[existingItemIndex].stock = currentStock;
@@ -207,7 +223,7 @@ function ProductDetail() {
             cartItems.push({
                 cartItemId,
                 id: product.id,
-                variantId: currentVariant?.id,
+                variantId: targetVariant?.id,
                 name: product.name,
                 variant: variantLabel,
                 price: priceNum,
@@ -306,7 +322,7 @@ function ProductDetail() {
                     {colorList.length > 0 && (
                         <div className="detail-option-section">
                             <div className="detail-option-label">
-                                Màu sắc: <span className="detail-option-selected">{selectedColor || "Chọn màu"}</span>
+                                Màu sắc:
                             </div>
                             <div className="detail-color-list">
                                 {colorList.map((c) => (
@@ -326,7 +342,7 @@ function ProductDetail() {
                     {sizeList.length > 0 && (
                         <div className="detail-option-section">
                             <div className="detail-option-label">
-                                Kích cỡ: <span className="detail-option-selected">{selectedSize || "Chọn size"}</span>
+                                Kích cỡ:
                             </div>
                             <div className="detail-size-list">
                                 {sizeList.map((s) => (
