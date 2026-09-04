@@ -12,48 +12,10 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 import config from "../../config/config";
+import { syncCartWithServer, type CartItem } from "../../api/cartApi";
 import "./Cart.css";
 
-export interface CartItem {
-    cartItemId?: string;
-    id: number;
-    variantId?: number;
-    name: string;
-    variant: string;
-    price: number;
-    originalPrice?: number;
-    quantity: number;
-    image: string;
-    selected: boolean;
-    stock?: number;
-}
-
-const initialCartItems: CartItem[] = [
-    {
-        cartItemId: "item_101",
-        id: 101,
-        name: "Áo Polo Nam Premium Cotton Cao Cấp",
-        variant: "Màu Trắng / Size L",
-        price: 35,
-        originalPrice: 45,
-        quantity: 2,
-        image: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=200&q=80",
-        selected: true,
-        stock: 20,
-    },
-    {
-        cartItemId: "item_102",
-        id: 102,
-        name: "Quần Jeans Slim-Fit Co Giãn Thời Trang",
-        variant: "Màu Xanh Đen / Size 31",
-        price: 58,
-        originalPrice: 72,
-        quantity: 1,
-        image: "https://images.unsplash.com/photo-1542272604-780c36856d60?auto=format&fit=crop&w=200&q=80",
-        selected: true,
-        stock: 15,
-    },
-];
+export type { CartItem };
 
 const FREESHIP_THRESHOLD = 50; // $50 for free shipping
 const DEFAULT_SHIPPING_FEE = 5;
@@ -66,11 +28,18 @@ function Cart() {
             try {
                 return JSON.parse(saved);
             } catch {
-                return initialCartItems;
+                return [];
             }
         }
-        return initialCartItems;
+        return [];
     });
+
+    useEffect(() => {
+        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+        if (token) {
+            syncCartWithServer();
+        }
+    }, []);
 
     const [promoInput, setPromoInput] = useState("");
     const [appliedPromo, setAppliedPromo] = useState<{ code: string; discountPercent?: number; freeShip?: boolean } | null>(null);
@@ -324,12 +293,12 @@ function Cart() {
                                         src={item.image}
                                         alt={item.name}
                                         className="cart-item-img"
-                                        onClick={() => navigate(`/${config.routes.PRODUCT_DETAIL(String(item.id))}`)}
+                                        onClick={() => navigate(`/${config.routes.PRODUCT_DETAIL(Number(item.id))}`)}
                                     />
                                     <div className="cart-item-details">
                                         <span
                                             className="cart-item-name"
-                                            onClick={() => navigate(`/${config.routes.PRODUCT_DETAIL(String(item.id))}`)}
+                                            onClick={() => navigate(`/${config.routes.PRODUCT_DETAIL(Number(item.id))}`)}
                                         >
                                             {item.name}
                                         </span>

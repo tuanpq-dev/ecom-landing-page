@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, message } from "antd";
 import { MailOutlined, LockOutlined, SafetyOutlined, CheckCircleOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import FormInput from "../../@crema/core/Form/FormInput";
 import config from "../../config/config";
 import { URL } from "../../config/apiUrl";
 import "../Auth/Auth.css";
 import axiosClient from "../../api/axiosClient";
+import { syncCartWithServer } from "../../api/cartApi";
 
 interface LoginFormValues {
     email: string;
@@ -16,7 +17,35 @@ interface LoginFormValues {
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [loading, setLoading] = useState(false);
+
+    const redirectParam = new URLSearchParams(location.search).get("redirect");
+    const registerPath = redirectParam
+        ? `/${config.routes.REGISTER}?redirect=${encodeURIComponent(redirectParam)}`
+        : `/${config.routes.REGISTER}`;
+
+    const getRedirectUrl = () => {
+        const fromRouter = new URLSearchParams(location.search).get("redirect");
+        const fromWindow = new URLSearchParams(window.location.search).get("redirect");
+        const fromStorage = sessionStorage.getItem("redirectAfterLogin");
+        const fromLastPage = sessionStorage.getItem("lastVisitedPage");
+
+        let target = fromRouter || fromWindow || fromStorage || fromLastPage || "/";
+
+        sessionStorage.removeItem("redirectAfterLogin");
+
+        if (
+            target.startsWith("/login") ||
+            target.startsWith("/register") ||
+            target.startsWith("/forgot-password") ||
+            target.startsWith("/reset-password")
+        ) {
+            target = "/";
+        }
+
+        return target.startsWith("/") ? target : `/${target}`;
+    };
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -29,17 +58,19 @@ const Login: React.FC = () => {
                 localStorage.setItem("accessToken", token);
                 localStorage.setItem("user", JSON.stringify(user));
                 window.dispatchEvent(new Event("auth-change"));
+                syncCartWithServer();
                 message.success({
                     content: `Chào mừng bạn trở lại, ${user.fullname || "khách hàng"}!`,
                     icon: <CheckCircleOutlined />,
                     duration: 3,
                 });
-                navigate("/");
+                const target = getRedirectUrl();
+                navigate(target, { replace: true });
             } catch {
                 // Ignore
             }
         }
-    }, [navigate]);
+    }, [navigate, location]);
 
     const onFinish = async (values: LoginFormValues) => {
         setLoading(true);
@@ -53,6 +84,7 @@ const Login: React.FC = () => {
                 localStorage.setItem("user", JSON.stringify(response.user));
             }
             window.dispatchEvent(new Event("auth-change"));
+            await syncCartWithServer();
 
             message.success({
                 content: `Chào mừng bạn trở lại, ${response.user?.fullname || "khách hàng"}!`,
@@ -60,7 +92,8 @@ const Login: React.FC = () => {
                 duration: 3,
             });
 
-            navigate("/");
+            const target = getRedirectUrl();
+            navigate(target, { replace: true });
         } catch (err: any) {
             message.error(typeof err === "string" ? err : err.message || "Đăng nhập thất bại");
         } finally {
@@ -165,6 +198,8 @@ const Login: React.FC = () => {
                         type="button"
                         className="social-btn"
                         onClick={() => {
+                            const target = getRedirectUrl();
+                            sessionStorage.setItem("redirectAfterLogin", target);
                             window.location.href = `${URL}/auth/google`;
                         }}
                     >
@@ -205,11 +240,11 @@ const Login: React.FC = () => {
                 <div className="auth-footer">
                     <span>Bạn chưa có tài khoản?</span>
                     <a
-                        href={`/${config.routes.REGISTER}`}
+                        href={registerPath}
                         className="auth-footer-link"
                         onClick={(e) => {
                             e.preventDefault();
-                            navigate(`/${config.routes.REGISTER}`);
+                            navigate(registerPath);
                         }}
                     >
                         Đăng ký ngay

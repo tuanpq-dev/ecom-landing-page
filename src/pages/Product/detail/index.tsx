@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, useLocation } from "react-router";
 import { StarFilled, HeartOutlined, ShoppingCartOutlined, ArrowLeftOutlined, LoadingOutlined } from "@ant-design/icons";
-import { Spin, message } from "antd";
+import { Spin, message, Modal } from "antd";
 import { parseProductImage, type ApiProduct } from "../index";
+import config from "../../../config/config";
 import { URL } from "../../../config/apiUrl";
 import axiosClient from "../../../api/axiosClient";
 import { addToCartApi } from "../../../api/cartApi";
@@ -12,6 +13,7 @@ import ProductReviewSection from "./ProductReviewSection";
 function ProductDetail() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [product, setProduct] = useState<ApiProduct | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -163,6 +165,25 @@ function ProductDetail() {
     const handleAddToCart = async () => {
         if (!product) return;
 
+        // Check authentication: token must exist to add to cart
+        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+        if (!token) {
+            const currentPath = location.pathname + location.search;
+            sessionStorage.setItem("redirectAfterLogin", currentPath);
+            Modal.confirm({
+                title: "Yêu cầu đăng nhập",
+                content: "Vui lòng đăng nhập tài khoản để thêm sản phẩm vào giỏ hàng.",
+                okText: "Đăng nhập ngay",
+                cancelText: "Để sau",
+                centered: true,
+                okButtonProps: { style: { background: "#c89968", borderColor: "#c89968" } },
+                onOk: () => {
+                    navigate(`/${config.routes.LOGIN}?redirect=${encodeURIComponent(currentPath)}`);
+                },
+            });
+            return;
+        }
+
         const targetVariant = currentVariant || (product.variants && product.variants[0]);
 
         if (currentStock <= 0) {
@@ -203,8 +224,7 @@ function ProductDetail() {
             return;
         }
 
-        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-        if (token && targetVariant?.id) {
+        if (targetVariant?.id) {
             try {
                 await addToCartApi({
                     variantId: targetVariant.id,

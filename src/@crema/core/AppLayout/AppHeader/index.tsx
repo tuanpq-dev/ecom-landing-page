@@ -17,6 +17,7 @@ import config from "../../../../config/config";
 import { URL } from "../../../../config/apiUrl";
 import axiosClient from "../../../../api/axiosClient";
 import { searchProductsApi } from "../../../../api/productApi";
+import { syncCartWithServer } from "../../../../api/cartApi";
 import { parseProductImage, type ApiProduct } from "../../../../pages/Product";
 import useDebounce from "../../../../hooks/useDebounce";
 import "./AppHeader.css";
@@ -87,6 +88,7 @@ function AppHeader() {
                 } catch {
                     // Token expired or invalid
                 }
+                syncCartWithServer();
             }
         };
 
@@ -97,6 +99,7 @@ function AppHeader() {
             if (savedUser) {
                 try {
                     setUser(JSON.parse(savedUser));
+                    syncCartWithServer();
                 } catch {
                     setUser(null);
                 }
@@ -253,8 +256,12 @@ function AppHeader() {
                 } finally {
                     localStorage.removeItem("accessToken");
                     localStorage.removeItem("user");
+                    localStorage.removeItem("cart");
+                    localStorage.removeItem("cartUserId");
                     setUser(null);
+                    setCartItems([]);
                     window.dispatchEvent(new Event("auth-change"));
+                    window.dispatchEvent(new Event("cart-change"));
                     message.success("Đã đăng xuất tài khoản thành công!");
                     navigate(`/${config.routes.LOGIN}`);
                 }
@@ -431,11 +438,33 @@ function AppHeader() {
                                 </Dropdown>
                             ) : (
                                 <>
-                                    <span className="sea-account-link" onClick={() => navigate(`/${config.routes.RESGISTER}`)}>
+                                    <span
+                                        className="sea-account-link"
+                                        onClick={() => {
+                                            const current = location.pathname + location.search;
+                                            if (!current.startsWith("/login") && !current.startsWith("/register")) {
+                                                sessionStorage.setItem("redirectAfterLogin", current);
+                                                navigate(`/${config.routes.REGISTER}?redirect=${encodeURIComponent(current)}`);
+                                            } else {
+                                                navigate(`/${config.routes.REGISTER}`);
+                                            }
+                                        }}
+                                    >
                                         Đăng ký
                                     </span>
                                     <span className="sea-account-divider">|</span>
-                                    <span className="sea-user-badge" onClick={() => navigate(`/${config.routes.LOGIN}`)}>
+                                    <span
+                                        className="sea-user-badge"
+                                        onClick={() => {
+                                            const current = location.pathname + location.search;
+                                            if (!current.startsWith("/login") && !current.startsWith("/register")) {
+                                                sessionStorage.setItem("redirectAfterLogin", current);
+                                                navigate(`/${config.routes.LOGIN}?redirect=${encodeURIComponent(current)}`);
+                                            } else {
+                                                navigate(`/${config.routes.LOGIN}`);
+                                            }
+                                        }}
+                                    >
                                         <Avatar size={22} icon={<UserOutlined />} style={{ backgroundColor: "#22242a" }} />
                                         <span>Đăng nhập</span>
                                     </span>
