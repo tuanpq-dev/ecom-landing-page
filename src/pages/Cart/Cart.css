@@ -178,6 +178,7 @@
 .quantity-control {
     display: inline-flex;
     align-items: center;
+    width: fit-content;
     border: 1px solid #dce1e7;
     border-radius: 6px;
     overflow: hidden;
@@ -403,7 +404,7 @@
     .cart-layout {
         grid-template-columns: 1fr;
     }
-    
+
     .order-summary-card {
         position: static;
     }
@@ -413,30 +414,30 @@
     .cart-table-header {
         display: none;
     }
-    
+
     .cart-item-row {
         grid-template-columns: 24px 1fr 30px;
-        grid-template-areas: 
+        grid-template-areas:
             "check info delete"
             "check controls controls";
         gap: 10px;
         padding: 16px 0;
     }
-    
+
     .cart-item-info {
         grid-area: info;
     }
-    
+
     .cart-item-delete {
         grid-area: delete;
     }
-    
-    .cart-item-row > div:nth-child(3),
-    .cart-item-row > div:nth-child(4),
-    .cart-item-row > div:nth-child(5) {
+
+    .cart-item-row>div:nth-child(3),
+    .cart-item-row>div:nth-child(4),
+    .cart-item-row>div:nth-child(5) {
         display: inline-flex;
     }
-    
+
     .cart-actions-bar {
         flex-direction: column;
         gap: 12px;
