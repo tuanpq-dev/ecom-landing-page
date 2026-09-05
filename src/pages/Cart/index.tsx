@@ -3,7 +3,6 @@ import { Breadcrumb, Button, Checkbox, Input, Popconfirm, message } from "antd";
 import {
     DeleteOutlined,
     ShoppingCartOutlined,
-    ArrowLeftOutlined,
     CarOutlined,
     SafetyCertificateOutlined,
     SyncOutlined,
@@ -144,8 +143,6 @@ function Cart() {
 
     // Freeship calculations
     const isFreeshipQualified = subtotal >= FREESHIP_THRESHOLD || appliedPromo?.freeShip;
-    const freeshipProgress = Math.min(100, Math.round((subtotal / FREESHIP_THRESHOLD) * 100));
-    const remainingForFreeship = Math.max(0, FREESHIP_THRESHOLD - subtotal);
 
     // Discount calculations
     let discountAmount = 0;
@@ -239,30 +236,6 @@ function Cart() {
                 </h1>
             </div>
 
-            {/* Free Shipping Progress Banner */}
-            <div className="freeship-banner">
-                <div className="freeship-header">
-                    <span>
-                        <CarOutlined style={{ color: "#c89968", fontSize: 16, marginRight: 6 }} />
-                        {isFreeshipQualified ? (
-                            <strong style={{ color: "#52c41a" }}>Bạn đủ điều kiện nhận MIỄN PHÍ VẬN CHUYỂN! 🎉</strong>
-                        ) : (
-                            <span>
-                                Mua thêm <strong className="freeship-highlight">{formatCurrency(remainingForFreeship)}</strong> để được <strong className="freeship-highlight">FREESHIP</strong>
-                            </span>
-                        )}
-                    </span>
-                    <span style={{ fontWeight: 600, color: "#c89968" }}>{freeshipProgress}%</span>
-                </div>
-                <div className="freeship-progress-bar">
-                    <div
-                        className="freeship-progress-fill"
-                        style={{ width: `${freeshipProgress}%` }}
-                    />
-                </div>
-            </div>
-
-            {/* Main Cart Grid */}
             <div className="cart-layout">
                 {/* Left Column: Items List */}
                 <div className="cart-items-card">
@@ -273,7 +246,7 @@ function Cart() {
                         <span>Đơn giá</span>
                         <span>Số lượng</span>
                         <span>Thành tiền</span>
-                        <span></span>
+                        <span>Hành động</span>
                     </div>
 
                     {/* Cart Items Loop */}
@@ -302,12 +275,6 @@ function Cart() {
                                         >
                                             {item.name}
                                         </span>
-                                        <span className="cart-item-variant">{item.variant}</span>
-                                        {item.stock !== undefined && (
-                                            <span style={{ fontSize: 11, color: item.stock <= 5 ? "#ff4d4f" : "#888" }}>
-                                                {item.stock <= 5 ? `Kho còn: ${item.stock}` : `Tồn kho: ${item.stock}`}
-                                            </span>
-                                        )}
                                     </div>
                                 </div>
 
@@ -369,7 +336,6 @@ function Cart() {
                     <div className="cart-actions-bar">
                         <Button
                             type="text"
-                            icon={<ArrowLeftOutlined />}
                             onClick={() => navigate(`/${config.routes.PRODUCT}`)}
                             style={{ color: "#555e6b", padding: 0 }}
                         >
